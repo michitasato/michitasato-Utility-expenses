@@ -1,23 +1,26 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from .models import Friend
-from .forms import HelloForm
+from .forms import FriendForm
+
 
 def index(request):
+    data = Friend.objects.all()
     params = {
         'title': 'Hello',
-        'message': 'all friends.',
-        'form': HelloForm(),
-        'data': [],
+        'data': data,
     }
-    if (request.method == 'POST'):
-        num = request.POST['id']
-        item = Friend.objects.get(id=num)
-        params['data'] = [item]
-        params['form'] = HelloForm(request.POST)
-    else:
-        params['data'] = Friend.objects.all() 
     return render(request, 'accounts/index.html', params)
-    
 
-
+def create(request):
+    if (request.method == 'POST'):
+        obj = Friend()
+        friend = FriendForm(request.POST, instance=obj)
+        friend.save()
+        return redirect(to='/accounts')
+    params = {
+        'title': 'Hello',
+        'form': FriendForm(),
+    }
+    return render(request, 'accounts/create.html', params)
