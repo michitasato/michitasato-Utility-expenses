@@ -24,3 +24,16 @@ def create(request):
         'form': FriendForm(),
     }
     return render(request, 'accounts/create.html', params)
+
+def edit(request, num):
+    obj = Friend.objects.get(id=num)
+    if (request.method == 'POST'):
+        friend = FriendForm(request.POST, instance=obj)
+        friend.save()
+        return redirect(to='/accounts')
+    params = {
+        'title': 'Hello',
+        'id': num,
+        'form': FriendForm(instance=obj),
+    }
+    return render(request, 'accounts/edit.html', params)
